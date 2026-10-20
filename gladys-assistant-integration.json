@@ -1,177 +1,722 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Kopia",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Your Kopia snapshots in Gladys: their state, and an alert when one fails or stops running.",
+    "fr": "Vos instantanés Kopia dans Gladys : leur état, et une alerte si l'un échoue ou ne tourne plus.",
+    "de": "Deine Kopia-Snapshots in Gladys: ihr Zustand und ein Alarm, wenn einer fehlschlägt.",
+    "es": "Sus instantáneas de Kopia en Gladys: su estado y una alerta si una falla o deja de ejecutarse."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/guim31/gladys-kopia:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-kopia/main/cover.png",
+  "categories": ["services", "network"],
+  "transports": ["local"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Your Kopia server",
+        "fr": "Votre serveur Kopia",
+        "de": "Dein Kopia-Server",
+        "es": "Su servidor Kopia"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "Kopia started as a server with its web interface (kopia server start). Enter its address, its username and its password, then add the sources to follow from the Discover tab.",
+        "fr": "Kopia lancé en serveur avec son interface web (kopia server start). Saisissez son adresse, son nom d'utilisateur et son mot de passe, puis ajoutez les sources à suivre depuis l'onglet Découverte.",
+        "de": "Kopia als Server mit Weboberfläche gestartet (kopia server start). Gib seine Adresse, seinen Benutzernamen und sein Passwort ein und lege dann die Quellen im Tab „Entdecken“ an.",
+        "es": "Kopia iniciado como servidor con su interfaz web (kopia server start). Introduzca su dirección, su usuario y su contraseña, y después añada las fuentes desde la pestaña Descubrir."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://github.com/guim31/gladys-kopia/blob/main/docs/en.md",
+          "label": {
+            "en": "Setup guide",
+            "fr": "Guide d'installation",
+            "de": "Einrichtungsanleitung",
+            "es": "Guía de instalación"
+          }
+        },
+        {
+          "url": "https://kopia.io/docs/reference/command-line/common/server-start/",
+          "label": {
+            "en": "Kopia server documentation",
+            "fr": "Documentation du serveur Kopia",
+            "de": "Kopia-Server-Dokumentation",
+            "es": "Documentación del servidor Kopia"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "url",
+      "type": "string",
+      "label": {
+        "en": "Kopia address",
+        "fr": "Adresse de Kopia",
+        "de": "Kopia-Adresse",
+        "es": "Dirección de Kopia"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "description": {
+        "en": "The address of the web interface, port 51515 by default. https:// if the server uses TLS.",
+        "fr": "L'adresse de l'interface web, port 51515 par défaut. En https:// si le serveur utilise TLS.",
+        "de": "Die Adresse der Weboberfläche, standardmäßig Port 51515. https://, wenn der Server TLS nutzt.",
+        "es": "La dirección de la interfaz web, puerto 51515 por defecto. https:// si el servidor usa TLS."
+      },
+      "placeholder": {
+        "en": "e.g. https://192.168.1.2:51515",
+        "fr": "ex. https://192.168.1.2:51515",
+        "de": "z. B. https://192.168.1.2:51515",
+        "es": "p. ej. https://192.168.1.2:51515"
+      },
+      "required": true
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+      "key": "username",
+      "type": "string",
+      "label": {
+        "en": "Username",
+        "fr": "Nom d'utilisateur",
+        "de": "Benutzername",
+        "es": "Usuario"
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
-      "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "description": {
+        "en": "The --server-username of the server, kopia by default.",
+        "fr": "Le --server-username du serveur, kopia par défaut.",
+        "de": "Der --server-username des Servers, standardmäßig kopia.",
+        "es": "El --server-username del servidor, kopia por defecto."
+      },
       "required": false,
-      "default": "celsius",
+      "default": "kopia"
+    },
+    {
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Password",
+        "fr": "Mot de passe",
+        "de": "Passwort",
+        "es": "Contraseña"
+      },
+      "description": {
+        "en": "The --server-password of the server (not the password of the repository).",
+        "fr": "Le --server-password du serveur (pas le mot de passe du dépôt).",
+        "de": "Das --server-password des Servers (nicht das Passwort des Repositorys).",
+        "es": "La --server-password del servidor (no la contraseña del repositorio)."
+      },
+      "required": true
+    },
+    {
+      "key": "fingerprint",
+      "type": "string",
+      "label": {
+        "en": "Certificate fingerprint",
+        "fr": "Empreinte du certificat",
+        "de": "Zertifikat-Fingerabdruck",
+        "es": "Huella del certificado"
+      },
+      "description": {
+        "en": "Only for a self-signed certificate (--tls-generate-cert): its SHA-256 fingerprint, shown by Kopia at startup (SERVER CERT SHA256). Empty otherwise.",
+        "fr": "Seulement pour un certificat auto-signé (--tls-generate-cert) : son empreinte SHA-256, affichée par Kopia au démarrage (SERVER CERT SHA256). Vide sinon.",
+        "de": "Nur für ein selbstsigniertes Zertifikat (--tls-generate-cert): sein SHA-256-Fingerabdruck, den Kopia beim Start anzeigt (SERVER CERT SHA256). Sonst leer.",
+        "es": "Solo para un certificado autofirmado (--tls-generate-cert): su huella SHA-256, que Kopia muestra al iniciar (SERVER CERT SHA256). Vacío en otro caso."
+      },
+      "required": false
+    },
+    {
+      "key": "options",
+      "type": "section",
+      "label": {
+        "en": "Options",
+        "fr": "Options",
+        "de": "Optionen",
+        "es": "Opciones"
+      }
+    },
+    {
+      "key": "poll_interval",
+      "type": "select",
+      "label": {
+        "en": "Refresh interval",
+        "fr": "Intervalle de rafraîchissement",
+        "de": "Aktualisierungsintervall",
+        "es": "Intervalo de actualización"
+      },
+      "description": {
+        "en": "How often Kopia is read. Every 30 seconds while a snapshot runs.",
+        "fr": "À quelle fréquence Kopia est lu. Toutes les 30 secondes pendant un instantané.",
+        "de": "Wie oft Kopia gelesen wird. Alle 30 Sekunden während eines Snapshots.",
+        "es": "Con qué frecuencia se lee Kopia. Cada 30 segundos durante una instantánea."
+      },
+      "required": false,
+      "default": "300",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "60",
+          "label": {
+            "en": "1 minute",
+            "fr": "1 minute",
+            "de": "1 Minute",
+            "es": "1 minuto"
+          }
+        },
+        {
+          "value": "300",
+          "label": {
+            "en": "5 minutes",
+            "fr": "5 minutes",
+            "de": "5 Minuten",
+            "es": "5 minutos"
+          }
+        },
+        {
+          "value": "900",
+          "label": {
+            "en": "15 minutes",
+            "fr": "15 minutes",
+            "de": "15 Minuten",
+            "es": "15 minutos"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "overdue_hours",
+      "type": "select",
+      "label": {
+        "en": "Overdue after",
+        "fr": "En retard après",
+        "de": "Überfällig nach",
+        "es": "Con retraso tras"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "A source without a successful snapshot for this long is overdue. Automatic: its scheduling interval plus a margin; a source without interval is then never overdue.",
+        "fr": "Une source sans instantané réussi depuis ce délai est en retard. Automatique : son intervalle de planification plus une marge ; une source sans intervalle n'est alors jamais en retard.",
+        "de": "Eine Quelle ohne erfolgreichen Snapshot seit dieser Zeit ist überfällig. Automatisch: ihr Zeitplan-Intervall plus ein Puffer; eine Quelle ohne Intervall ist dann nie überfällig.",
+        "es": "Una fuente sin instantánea correcta desde hace este tiempo tiene retraso. Automático: su intervalo de programación más un margen; una fuente sin intervalo nunca tiene retraso."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": {
+            "en": "Automatic (from the schedule)",
+            "fr": "Automatique (selon la planification)",
+            "de": "Automatisch (nach Zeitplan)",
+            "es": "Automático (según la programación)"
+          }
+        },
+        {
+          "value": "12",
+          "label": {
+            "en": "12 hours",
+            "fr": "12 heures",
+            "de": "12 Stunden",
+            "es": "12 horas"
+          }
+        },
+        {
+          "value": "24",
+          "label": {
+            "en": "24 hours",
+            "fr": "24 heures",
+            "de": "24 Stunden",
+            "es": "24 horas"
+          }
+        },
+        {
+          "value": "48",
+          "label": {
+            "en": "2 days",
+            "fr": "2 jours",
+            "de": "2 Tage",
+            "es": "2 días"
+          }
+        },
+        {
+          "value": "72",
+          "label": {
+            "en": "3 days",
+            "fr": "3 jours",
+            "de": "3 Tage",
+            "es": "3 días"
+          }
+        },
+        {
+          "value": "168",
+          "label": {
+            "en": "1 week",
+            "fr": "1 semaine",
+            "de": "1 Woche",
+            "es": "1 semana"
+          }
+        }
+      ]
+    },
+    {
+      "key": "allow_start",
+      "type": "boolean",
+      "label": {
+        "en": "Allow starting snapshots",
+        "fr": "Autoriser le lancement des instantanés",
+        "de": "Starten von Snapshots erlauben",
+        "es": "Permitir iniciar instantáneas"
+      },
+      "description": {
+        "en": "Lets the scene action \"Start a snapshot\" start a snapshot in Kopia.",
+        "fr": "Permet à l'action de scène « Lancer un instantané » de lancer un instantané dans Kopia.",
+        "de": "Erlaubt der Szenenaktion „Snapshot starten“, einen Snapshot in Kopia zu starten.",
+        "es": "Permite que la acción de escena «Iniciar una instantánea» inicie una instantánea en Kopia."
+      },
+      "required": false,
+      "default": true
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the names",
+        "fr": "Langue des noms",
+        "de": "Sprache der Namen",
+        "es": "Idioma de los nombres"
+      },
+      "description": {
+        "en": "Language of the feature names (set when a device is added), of the states and of the scene results.",
+        "fr": "Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil), des états et des résultats de scène.",
+        "de": "Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt), der Zustände und der Szenen-Ergebnisse.",
+        "es": "Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los estados y de los resultados de escena."
+      },
+      "required": false,
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
       "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "backup_succeeded",
+      "label": {
+        "en": "A snapshot succeeds",
+        "fr": "Un instantané réussit",
+        "de": "Ein Snapshot gelingt",
+        "es": "Una instantánea se completa"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "A Kopia snapshot completes without error (the errors its policy ignores apart).",
+        "fr": "Un instantané Kopia se termine sans erreur (hors erreurs ignorées par sa stratégie).",
+        "de": "Ein Kopia-Snapshot wird ohne Fehler abgeschlossen (außer den von seiner Richtlinie ignorierten).",
+        "es": "Una instantánea de Kopia termina sin errores (salvo los que su política ignora)."
       },
       "fields": [
         {
           "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
           "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
-          "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
-          ]
+          "source": "devices",
+          "label": {
+            "en": "Sources (empty: any)",
+            "fr": "Sources (vide : toutes)",
+            "de": "Quellen (leer: alle)",
+            "es": "Fuentes (vacío: todas)"
+          }
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "source",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "Source",
+            "fr": "Source",
+            "de": "Quelle",
+            "es": "Fuente"
+          }
+        },
+        {
+          "key": "duration_minutes",
+          "type": "number",
+          "label": {
+            "en": "Duration (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
+        },
+        {
+          "key": "files",
+          "type": "number",
+          "label": {
+            "en": "Files",
+            "fr": "Fichiers",
+            "de": "Dateien",
+            "es": "Archivos"
+          }
+        },
+        {
+          "key": "size",
+          "type": "string",
+          "label": {
+            "en": "Size",
+            "fr": "Taille",
+            "de": "Größe",
+            "es": "Tamaño"
+          }
+        },
+        {
+          "key": "snapshots",
+          "type": "number",
+          "label": {
+            "en": "Snapshots kept",
+            "fr": "Instantanés conservés",
+            "de": "Behaltene Snapshots",
+            "es": "Instantáneas conservadas"
+          }
+        }
+      ]
+    },
+    {
+      "key": "backup_failed",
+      "label": {
+        "en": "A snapshot fails",
+        "fr": "Un instantané échoue",
+        "de": "Ein Snapshot schlägt fehl",
+        "es": "Una instantánea falla"
+      },
+      "description": {
+        "en": "A Kopia snapshot fails, or ends with files it could not read, or incomplete.",
+        "fr": "Un instantané Kopia échoue, ou se termine avec des fichiers illisibles, ou incomplet.",
+        "de": "Ein Kopia-Snapshot schlägt fehl oder endet mit unlesbaren Dateien oder unvollständig.",
+        "es": "Una instantánea de Kopia falla, o termina con archivos ilegibles, o incompleta."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "multi_select",
+          "source": "devices",
+          "label": {
+            "en": "Sources (empty: any)",
+            "fr": "Sources (vide : toutes)",
+            "de": "Quellen (leer: alle)",
+            "es": "Fuentes (vacío: todas)"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "source",
+          "type": "string",
+          "label": {
+            "en": "Source",
+            "fr": "Source",
+            "de": "Quelle",
+            "es": "Fuente"
+          }
+        },
+        {
+          "key": "message",
+          "type": "string",
+          "label": {
+            "en": "First error",
+            "fr": "Première erreur",
+            "de": "Erster Fehler",
+            "es": "Primer error"
+          }
+        },
+        {
+          "key": "errors",
+          "type": "number",
+          "label": {
+            "en": "Errors",
+            "fr": "Erreurs",
+            "de": "Fehler",
+            "es": "Errores"
+          }
+        }
+      ]
+    },
+    {
+      "key": "backup_overdue",
+      "label": {
+        "en": "A source is overdue",
+        "fr": "Une source est en retard",
+        "de": "Eine Quelle ist überfällig",
+        "es": "Una fuente tiene retraso"
+      },
+      "description": {
+        "en": "A source has had no successful snapshot for longer than the \"Overdue after\" delay of the configuration.",
+        "fr": "Une source n'a pas eu d'instantané réussi depuis plus longtemps que le délai « En retard après » de la configuration.",
+        "de": "Eine Quelle hatte länger als die Zeit „Überfällig nach“ der Konfiguration keinen erfolgreichen Snapshot.",
+        "es": "Una fuente no ha tenido una instantánea correcta desde hace más que el plazo «Con retraso tras» de la configuración."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "multi_select",
+          "source": "devices",
+          "label": {
+            "en": "Sources (empty: any)",
+            "fr": "Sources (vide : toutes)",
+            "de": "Quellen (leer: alle)",
+            "es": "Fuentes (vacío: todas)"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "source",
+          "type": "string",
+          "label": {
+            "en": "Source",
+            "fr": "Source",
+            "de": "Quelle",
+            "es": "Fuente"
+          }
+        },
+        {
+          "key": "hours_since_success",
+          "type": "number",
+          "label": {
+            "en": "Hours since last success",
+            "fr": "Heures depuis la dernière réussite",
+            "de": "Stunden seit letztem Erfolg",
+            "es": "Horas desde el último éxito"
+          }
+        },
+        {
+          "key": "last_success",
+          "type": "string",
+          "label": {
+            "en": "Last success",
+            "fr": "Dernière réussite",
+            "de": "Letzter Erfolg",
+            "es": "Último éxito"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "get_backup_status",
+      "label": {
+        "en": "State of a source",
+        "fr": "État d'une source",
+        "de": "Zustand einer Quelle",
+        "es": "Estado de una fuente"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Reads the state of a Kopia source for the next actions: failed, overdue, in words, and a ready-made sentence.",
+        "fr": "Lit l'état d'une source Kopia pour les actions suivantes : en échec, en retard, en toutes lettres, et une phrase toute prête.",
+        "de": "Liest den Zustand einer Kopia-Quelle für die nächsten Aktionen: fehlgeschlagen, überfällig, in Worten, und einen fertigen Satz.",
+        "es": "Lee el estado de una fuente de Kopia para las siguientes acciones: fallida, con retraso, en palabras, y una frase lista."
+      },
+      "timeout_seconds": 30,
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "label": {
+            "en": "Source",
+            "fr": "Source",
+            "de": "Quelle",
+            "es": "Fuente"
+          },
           "required": true
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
+          "key": "failed",
           "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "label": {
+            "en": "Failed",
+            "fr": "En échec",
+            "de": "Fehlgeschlagen",
+            "es": "Fallida"
+          }
+        },
+        {
+          "key": "overdue",
+          "type": "boolean",
+          "label": {
+            "en": "Overdue",
+            "fr": "En retard",
+            "de": "Überfällig",
+            "es": "Con retraso"
+          }
+        },
+        {
+          "key": "state",
+          "type": "string",
+          "label": {
+            "en": "State",
+            "fr": "État",
+            "de": "Zustand",
+            "es": "Estado"
+          }
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Source",
+            "fr": "Source",
+            "de": "Quelle",
+            "es": "Fuente"
+          }
+        },
+        {
+          "key": "last_success",
+          "type": "string",
+          "label": {
+            "en": "Last success",
+            "fr": "Dernière réussite",
+            "de": "Letzter Erfolg",
+            "es": "Último éxito"
+          }
+        },
+        {
+          "key": "hours_since_success",
+          "type": "number",
+          "label": {
+            "en": "Hours since last success",
+            "fr": "Heures depuis la dernière réussite",
+            "de": "Stunden seit letztem Erfolg",
+            "es": "Horas desde el último éxito"
+          }
+        },
+        {
+          "key": "sentence",
+          "type": "string",
+          "label": {
+            "en": "Sentence",
+            "fr": "Phrase",
+            "de": "Satz",
+            "es": "Frase"
+          }
+        }
+      ]
+    },
+    {
+      "key": "start_backup",
+      "label": {
+        "en": "Start a snapshot",
+        "fr": "Lancer un instantané",
+        "de": "Snapshot starten",
+        "es": "Iniciar una instantánea"
+      },
+      "description": {
+        "en": "Starts a Kopia snapshot of the source now. Can be disabled in the configuration.",
+        "fr": "Lance maintenant un instantané Kopia de la source. Désactivable dans la configuration.",
+        "de": "Startet jetzt einen Kopia-Snapshot der Quelle. In der Konfiguration abschaltbar.",
+        "es": "Inicia ahora una instantánea de Kopia de la fuente. Se puede desactivar en la configuración."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Source",
+            "fr": "Source",
+            "de": "Quelle",
+            "es": "Fuente"
+          },
+          "required": true
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "kopia",
+      "label": {
+        "en": "Kopia",
+        "fr": "Kopia",
+        "de": "Kopia",
+        "es": "Kopia"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Failed sources first, then overdue ones, then the others, with their last success.",
+        "fr": "Les sources en échec d'abord, puis en retard, puis les autres, avec leur dernière réussite.",
+        "de": "Erst fehlgeschlagene Quellen, dann überfällige, dann die anderen, mit letztem Erfolg.",
+        "es": "Primero las fuentes fallidas, luego las retrasadas y las demás, con su último éxito."
+      },
+      "icon": "hard-drive",
+      "action_timeout_seconds": 30,
+      "settings": [
+        {
+          "key": "sources",
+          "type": "multi_select",
+          "source": "devices",
+          "label": {
+            "en": "Sources (empty: all)",
+            "fr": "Sources (vide : toutes)",
+            "de": "Quellen (leer: alle)",
+            "es": "Fuentes (vacío: todas)"
+          },
+          "description": {
+            "en": "Empty: every source of the server. Only the devices added to Gladys can be chosen.",
+            "fr": "Vide : toutes les sources du serveur. Seuls les appareils ajoutés à Gladys peuvent être choisis.",
+            "de": "Leer: alle Quellen des Servers. Nur die in Gladys angelegten Geräte sind wählbar.",
+            "es": "Vacío: todas las fuentes del servidor. Solo se pueden elegir los dispositivos añadidos a Gladys."
+          },
+          "required": false
+        }
+      ]
     }
   ]
 }

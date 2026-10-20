@@ -1,0 +1,200 @@
+{
+  "tasks": [
+    {
+      "id": "6",
+      "startTime": "2026-10-20T06:52:30.319581105Z",
+      "endTime": "2026-10-20T06:52:30.319630722Z",
+      "kind": "Snapshot",
+      "description": "nobody@nas:/tmp/src/gone at 2026-10-20T06:52:30Z",
+      "status": "FAILED",
+      "progressInfo": "",
+      "errorMessage": "unable to create local filesystem: unable to determine entry type: lstat /tmp/src/gone: no such file or directory",
+      "counters": null
+    },
+    {
+      "id": "5",
+      "startTime": "2026-10-20T06:52:27.1051656Z",
+      "endTime": "2026-10-20T06:52:27.191639938Z",
+      "kind": "Snapshot",
+      "description": "nobody@nas:/tmp/src/gone at 2026-10-20T06:52:27Z",
+      "status": "SUCCESS",
+      "progressInfo": "",
+      "counters": {
+        "Cached Bytes": {
+          "value": 0,
+          "units": "bytes",
+          "level": ""
+        },
+        "Cached Files": {
+          "value": 0,
+          "level": ""
+        },
+        "Errors": {
+          "value": 0,
+          "level": "error"
+        },
+        "Excluded Directories": {
+          "value": 0,
+          "level": ""
+        },
+        "Excluded Files": {
+          "value": 0,
+          "level": ""
+        },
+        "Hashed Bytes": {
+          "value": 2,
+          "units": "bytes",
+          "level": ""
+        },
+        "Hashed Files": {
+          "value": 1,
+          "level": ""
+        },
+        "Processed Bytes": {
+          "value": 2,
+          "units": "bytes",
+          "level": ""
+        },
+        "Processed Files": {
+          "value": 1,
+          "level": ""
+        },
+        "Uploaded Bytes": {
+          "value": 197,
+          "units": "bytes",
+          "level": ""
+        }
+      }
+    },
+    {
+      "id": "4",
+      "startTime": "2026-10-20T06:52:10.953997071Z",
+      "endTime": "2026-10-20T06:52:11.107443414Z",
+      "kind": "Snapshot",
+      "description": "nobody@nas:/tmp/src/docs at 2026-10-20T06:52:10Z",
+      "status": "SUCCESS",
+      "progressInfo": "",
+      "counters": {
+        "Cached Bytes": {
+          "value": 0,
+          "units": "bytes",
+          "level": ""
+        },
+        "Cached Files": {
+          "value": 0,
+          "level": ""
+        },
+        "Errors": {
+          "value": 0,
+          "level": "error"
+        },
+        "Excluded Directories": {
+          "value": 0,
+          "level": ""
+        },
+        "Excluded Files": {
+          "value": 0,
+          "level": ""
+        },
+        "Hashed Bytes": {
+          "value": 12,
+          "units": "bytes",
+          "level": ""
+        },
+        "Hashed Files": {
+          "value": 2,
+          "level": ""
+        },
+        "Processed Bytes": {
+          "value": 12,
+          "units": "bytes",
+          "level": ""
+        },
+        "Processed Files": {
+          "value": 2,
+          "level": ""
+        },
+        "Uploaded Bytes": {
+          "value": 198,
+          "units": "bytes",
+          "level": ""
+        }
+      }
+    },
+    {
+      "id": "3",
+      "startTime": "2026-10-20T06:52:10.67383371Z",
+      "endTime": "2026-10-20T06:52:10.939947018Z",
+      "kind": "Snapshot",
+      "description": "nobody@nas:/tmp/src/locked at 2026-10-20T06:52:10Z",
+      "status": "SUCCESS",
+      "progressInfo": "",
+      "counters": {
+        "Cached Bytes": {
+          "value": 0,
+          "units": "bytes",
+          "level": ""
+        },
+        "Cached Files": {
+          "value": 0,
+          "level": ""
+        },
+        "Errors": {
+          "value": 1,
+          "level": "error"
+        },
+        "Excluded Directories": {
+          "value": 0,
+          "level": ""
+        },
+        "Excluded Files": {
+          "value": 0,
+          "level": ""
+        },
+        "Hashed Bytes": {
+          "value": 7,
+          "units": "bytes",
+          "level": ""
+        },
+        "Hashed Files": {
+          "value": 2,
+          "level": ""
+        },
+        "Processed Bytes": {
+          "value": 7,
+          "units": "bytes",
+          "level": ""
+        },
+        "Processed Files": {
+          "value": 2,
+          "level": ""
+        },
+        "Uploaded Bytes": {
+          "value": 198,
+          "units": "bytes",
+          "level": ""
+        }
+      }
+    },
+    {
+      "id": "2",
+      "startTime": "2026-10-20T06:51:32.268267082Z",
+      "endTime": "2026-10-20T06:51:32.373653018Z",
+      "kind": "Maintenance",
+      "description": "Periodic maintenance",
+      "status": "SUCCESS",
+      "progressInfo": "",
+      "counters": null
+    },
+    {
+      "id": "1",
+      "startTime": "2026-10-20T06:51:31.946925288Z",
+      "endTime": "2026-10-20T06:51:32.267342052Z",
+      "kind": "Repository",
+      "description": "Open",
+      "status": "SUCCESS",
+      "progressInfo": "",
+      "counters": null
+    }
+  ]
+}

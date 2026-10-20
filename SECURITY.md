@@ -30,6 +30,25 @@ Gladys before reporting a problem.
 
 In scope: the code of this repository and the Docker image it publishes.
 
+What the integration handles:
+
+- the **username and password of the Kopia server** (`--server-username`,
+  `--server-password`), stored by Gladys in the integration configuration
+  (never written to `/data`, never logged); they are only sent, as Basic
+  credentials, to the address configured, and redirects are not followed so
+  they never reach another host. The password of the repository is never
+  asked;
+- the **session cookie and CSRF token** of the Kopia web interface: kept in
+  memory only, asked again when Kopia restarts;
+- an optional **certificate fingerprint** (SHA-256): a self-signed certificate
+  is accepted only when it matches, before any credential is sent;
+- `/data/kopia-state.json`: the address of the server, and for each source
+  (a hash of its identity) its last snapshot seen, its last success and whether
+  it was overdue (no secret, no path);
+- network: HTTP(S) requests to the Kopia address, nothing else; no port is
+  opened. The integration can start a snapshot (when allowed in its
+  configuration), never delete, restore or edit one.
+
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+and Kopia itself.

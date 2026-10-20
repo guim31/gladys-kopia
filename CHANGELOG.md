@@ -12,44 +12,19 @@ the notes of the version's GitHub Release.
 
 ### Added
 
-- A working example of scene triggers, scene actions and dashboard widgets
-  (Gladys 5.1.0 or later).
-- `CHANGELOG.md`, rolled by the Release workflow.
-- A GitHub Release for every version, with its changelog section as notes: the
-  Gladys Supervision page links each version to the repository's releases.
-- CI runs the tests on Node 22 and 24, and builds the Docker image.
-- Dependabot keeps the npm dependencies and the GitHub Actions up to date.
-- `SECURITY.md` (how to report a vulnerability) and `CLAUDE.md` (project rules
-  for contributors and coding assistants).
-- Manifest tests: `version` matches `package.json`, `docker_image` is tagged
-  with it, descriptions hold 10 to 100 characters, placeholders are
-  multi-language objects.
-- The latitude and longitude fields show an example value as placeholder.
-
-### Changed
-
-- Node.js 22 or later is required (Node 20 is end-of-life).
-- Integration SDK 0.15.0. The tests now run against the fake Gladys of the
-  SDK, which refuses the payloads Gladys refuses.
-- The refresh interval is one minute minimum, the fastest Gladys polls a
-  device. The plug's power is only sent when it changes, and every 30
-  minutes otherwise.
-
-### Fixed
-
-- Gladys refused the devices of the Discovery tab: the weather station and
-  the plug declared their poll frequency in seconds instead of one of the
-  values Gladys accepts, and were never polled. They now poll every minute,
-  and the readings follow the refresh interval of the configuration.
-
-- The release commit no longer fails `npm run format:check`: the Release
-  workflow updates the manifest `version` and `docker_image` in place instead
-  of re-printing the whole file with `jq`.
-- The integration can write to `/data`: the image creates the directory owned
-  by the `node` user, a new Docker volume was owned by root.
-- A sub-container running the integration's own image follows it to the new
-  tag at each release, as well as in the manifest of the build summary: it kept
-  the previous tag, which may not exist on the registry. Sub-containers on a
-  third-party image (a broker, a database...) keep theirs.
-
-[Unreleased]: https://github.com/GladysAssistant/integration-template-js/commits/main
+- The sources of a Kopia server (`kopia server start`) in Gladys: one device per
+  source (state, last successful snapshot, hours since then, last snapshot
+  duration, size, files, snapshots kept, errors of the last snapshot, running,
+  next scheduled snapshot) and one server device (repository connected,
+  snapshot running, progress, current source, sources failed and overdue).
+- Scene triggers: a snapshot succeeds, a snapshot fails (files unreadable,
+  incomplete, or a complete failure), a source is overdue (automatic delay from
+  its scheduling policy, or a fixed one) — for any source, added to Gladys or
+  not, kept across restarts.
+- Scene actions: state of a source (with a ready-made sentence), start a
+  snapshot (can be disabled in the configuration).
+- Dashboard widget: failed sources first, then the overdue ones, then the
+  others, with a Refresh button.
+- HTTP, HTTPS, and self-signed HTTPS pinned by its SHA-256 fingerprint.
+- "Test the connection"; texts and documentation in English, French, German
+  and Spanish.
