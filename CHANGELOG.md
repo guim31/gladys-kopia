@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-20
+
 ### Added
 
 - The sources of a Kopia server (`kopia server start`) in Gladys: one device per
@@ -28,3 +30,6 @@ the notes of the version's GitHub Release.
 - HTTP, HTTPS, and self-signed HTTPS pinned by its SHA-256 fingerprint.
 - "Test the connection"; texts and documentation in English, French, German
   and Spanish.
+
+[Unreleased]: https://github.com/guim31/gladys-kopia/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-kopia/releases/tag/v1.0.0
