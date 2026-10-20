@@ -59,7 +59,7 @@ Dans Gladys, **Intégrations → Kopia → Configuration** :
   `--server-password` du serveur.
 - **Empreinte du certificat** : seulement pour un certificat auto-signé
   (`--tls-generate-cert`) : le `SERVER CERT SHA256` noté plus haut.
-  L'intégration accepte alors ce certificat, et aucun autre. À laisser vide en
+  L'intégration accepte alors ce certificat, et aucun autre, toujours en `https://`. À laisser vide en
   `http://` ou avec un certificat signé par une autorité reconnue.
 - **Intervalle de rafraîchissement** : 1, 5 (par défaut) ou 15 minutes.
 - **En retard après** : quand une source sans instantané réussi passe en

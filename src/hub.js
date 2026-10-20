@@ -371,7 +371,17 @@ export class KopiaHub {
       if (next.has(source.id)) {
         continue;
       }
-      const view = viewOf(source, failures.get(source.key) ?? null, histories.get(source.id), {
+      const previousView = this.sources.get(source.id);
+      if (source.last?.checkpoint) {
+        // A checkpoint of the snapshot running: keep the last real one.
+        source.last = previousView?.last ?? null;
+      }
+      // The last complete failure: from the tasks of Kopia, or as kept in
+      // /data (Kopia forgets its tasks when it restarts).
+      const live = failures.get(source.key) ?? null;
+      const kept = this.saved.sources[source.id]?.failure ?? null;
+      const failure = !kept || (live && live.begin >= kept.begin) ? live : kept;
+      const view = viewOf(source, failure, histories.get(source.id), {
         now,
         overdueHours: this.config.overdueHours,
         knownSuccess: this.saved.sources[source.id]?.lastSuccess ?? null,
@@ -435,6 +445,9 @@ export class KopiaHub {
         runAt: run?.begin ?? null,
         overdue: source.overdue,
         lastSuccess: source.lastSuccess,
+        ...(run?.id.startsWith('t:')
+          ? { failure: { begin: run.begin, end: run.end, message: run.message } }
+          : {}),
       };
       return true;
     }
@@ -448,6 +461,10 @@ export class KopiaHub {
       saved.runAt = run.begin;
       dirty = true;
       await this.fireRun(source);
+    }
+    if (run?.id.startsWith('t:') && saved.failure?.begin !== run.begin) {
+      saved.failure = { begin: run.begin, end: run.end, message: run.message };
+      dirty = true;
     }
     if (source.overdue !== saved.overdue) {
       // null: the threshold changed, nothing to announce.

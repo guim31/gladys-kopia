@@ -154,6 +154,32 @@ test('Kopia restarted: the task of a failure is lost, the snapshot before it is 
   assert.equal(world.fake.connectionStatus.connected, true);
   assert.equal(events(world, TRIGGERS.SUCCEEDED).length, 0);
   assert.equal(events(world, TRIGGERS.FAILED).length, 1);
+  // Still failed: the failure is kept in /data.
+  assert.equal(world.hub.find(idsOf(world, '/home/anna').device).lastRun.result, 'error');
+  // A new snapshot that succeeds is news.
+  world.clock.advance(HOUR);
+  world.kopia.snapshot('/home/anna', 'success', { end: world.clock.time });
+  await world.hub.pollNow();
+  assert.equal(events(world, TRIGGERS.SUCCEEDED).length, 1);
+  assert.equal(world.hub.find(idsOf(world, '/home/anna').device).lastRun.result, 'success');
+});
+
+test('a checkpoint of a long snapshot is no result', async (t) => {
+  const world = await createWorld();
+  t.after(() => world.app.stop());
+  world.clock.advance(HOUR);
+  world.kopia.run('/home/anna', 50);
+  world.kopia.snapshot('/home/anna', 'success', { end: world.clock.time });
+  const checkpoint = world.kopia.get('/home/anna').snapshots.at(-1);
+  checkpoint.incomplete = 'checkpoint';
+  await world.hub.pollNow();
+  assert.equal(world.fake.sceneEvents.length, 0);
+  assert.equal(world.hub.find(idsOf(world, '/home/anna').device).lastRun.result, 'success');
+  world.clock.advance(HOUR);
+  world.kopia.idle('/home/anna');
+  delete checkpoint.incomplete; // the final snapshot, same start
+  await world.hub.pollNow();
+  assert.equal(events(world, TRIGGERS.SUCCEEDED).length, 1);
 });
 
 test('a source becomes overdue once, by its schedule, and back when it succeeds', async (t) => {

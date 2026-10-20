@@ -57,7 +57,7 @@ En Gladys, **Integraciones → Kopia → Configuración**:
   `--server-password` del servidor.
 - **Huella del certificado**: solo para un certificado autofirmado
   (`--tls-generate-cert`): el `SERVER CERT SHA256` anotado antes. La
-  integración acepta entonces este certificado, y ningún otro. Déjelo vacío
+  integración acepta entonces este certificado, y ningún otro, siempre por `https://`. Déjelo vacío
   con `http://` o con un certificado firmado por una autoridad reconocida.
 - **Intervalo de actualización**: 1, 5 (por defecto) o 15 minutos.
 - **Con retraso tras**: cuándo una fuente sin instantánea correcta pasa a

@@ -25,6 +25,7 @@
 import { createHash } from 'node:crypto';
 import http from 'node:http';
 import https from 'node:https';
+import net from 'node:net';
 import tls from 'node:tls';
 
 export const ERROR_KINDS = Object.freeze({
@@ -80,10 +81,11 @@ export function normalizeFingerprint(value) {
 /** Open a TLS connection and check the certificate against the pinned fingerprint. */
 function pinnedSocket(url, fingerprint, timeoutMs) {
   return new Promise((resolve, reject) => {
+    const host = url.hostname.replace(/^\[|\]$/g, '');
     const socket = tls.connect({
-      host: url.hostname.replace(/^\[|\]$/g, ''),
+      host,
       port: Number(url.port || 443),
-      servername: tls.isIP?.(url.hostname) ? undefined : url.hostname,
+      servername: net.isIP(host) ? undefined : host,
       // Checked below, against the fingerprint, before anything is sent.
       rejectUnauthorized: false,
     });
@@ -147,9 +149,12 @@ export async function httpRequest(
         }),
       );
     });
-    request.on('timeout', () =>
-      request.destroy(Object.assign(new Error('Timeout'), { code: 'ETIMEDOUT' })),
-    );
+    const timeout = () =>
+      request.destroy(Object.assign(new Error('Timeout'), { code: 'ETIMEDOUT' }));
+    request.on('timeout', timeout);
+    // `timeout` above is an idle timeout: a server that trickles bytes is cut here.
+    const deadline = setTimeout(timeout, timeoutMs);
+    request.on('close', () => clearTimeout(deadline));
     request.on('error', reject);
     request.end(body);
   });
@@ -217,6 +222,8 @@ export function normalizeSnapshot(data) {
   const stats = data.stats ?? {};
   const errors = integer(stats.errorCount) ?? integer(summary.numFailed) ?? 0;
   const incomplete = Boolean(data.incomplete || data.incompleteReason);
+  // Kopia saves "checkpoint" manifests during a long upload: not a result.
+  const checkpoint = [data.incomplete, data.incompleteReason].includes('checkpoint');
   const result = errors > 0 || incomplete ? 'error' : 'success';
   return {
     id: typeof data.id === 'string' ? data.id : String(begin),
@@ -230,6 +237,7 @@ export function normalizeSnapshot(data) {
     files: integer(summary.files) ?? integer(stats.fileCount),
     errors,
     incomplete,
+    checkpoint,
     message: firstError(summary.errors) || (incomplete ? clean(String(data.incomplete)) : ''),
   };
 }
@@ -340,7 +348,7 @@ export function failedSnapshots(data) {
 export function historyOf(data) {
   const snapshots = (Array.isArray(data?.snapshots) ? data.snapshots : [])
     .map(normalizeSnapshot)
-    .filter(Boolean);
+    .filter((snapshot) => snapshot && !snapshot.checkpoint);
   const good = snapshots.filter((snapshot) => snapshot.result !== 'error');
   return {
     count: integer(data?.unfilteredCount) ?? snapshots.length,

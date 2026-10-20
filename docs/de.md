@@ -59,7 +59,7 @@ In Gladys, **Integrationen → Kopia → Konfiguration**:
   `--server-password` des Servers.
 - **Zertifikat-Fingerabdruck**: nur für ein selbstsigniertes Zertifikat
   (`--tls-generate-cert`): der oben notierte `SERVER CERT SHA256`. Die
-  Integration akzeptiert dann dieses Zertifikat und kein anderes. Lass das Feld
+  Integration akzeptiert dann dieses Zertifikat und kein anderes, immer über `https://`. Lass das Feld
   leer bei `http://` oder einem Zertifikat einer bekannten Stelle.
 - **Aktualisierungsintervall**: 1, 5 (Standard) oder 15 Minuten.
 - **Überfällig nach**: wann eine Quelle ohne erfolgreichen Snapshot überfällig

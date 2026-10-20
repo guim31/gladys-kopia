@@ -55,7 +55,7 @@ In Gladys, **Integrations → Kopia → Configuration**:
   `--server-password` of the server.
 - **Certificate fingerprint**: only for a self-signed certificate
   (`--tls-generate-cert`): the `SERVER CERT SHA256` noted above. The
-  integration then accepts this certificate, and no other. Leave it empty with
+  integration then accepts this certificate, and no other, always over `https://`. Leave it empty with
   `http://` or a certificate signed by a known authority.
 - **Refresh interval**: 1, 5 (default) or 15 minutes.
 - **Overdue after**: when a source without a successful snapshot becomes

@@ -73,6 +73,9 @@ export function parseServerUrl(raw) {
   return `${url.origin}${path}`;
 }
 
+const withFingerprintScheme = (url, fingerprint) =>
+  url && fingerprint ? url.replace(/^http:/, 'https:') : url;
+
 /** Host part shown to the user (no scheme). */
 export const hostOf = (url) => url.replace(/^https?:\/\//, '');
 
@@ -90,7 +93,9 @@ export function normalizeConfig(raw = {}) {
     ? String(source.overdue_hours)
     : DEFAULT_CONFIG.overdue_hours;
   return {
-    url: typed ? parseServerUrl(typed) : null,
+    // With a certificate fingerprint, always https: the credentials never go
+    // out in clear text to the TLS port of a bare address.
+    url: typed ? withFingerprintScheme(parseServerUrl(typed), text('fingerprint')) : null,
     urlTyped: Boolean(typed),
     username: text('username') || DEFAULT_USERNAME,
     // Never trimmed: a password may end with a space.

@@ -54,6 +54,7 @@ test('the sources of a real Kopia, normalized', async () => {
       files: 2,
       errors: 0,
       incomplete: false,
+      checkpoint: false,
       message: '',
     },
   );
@@ -133,6 +134,14 @@ test('the address, the username and the fingerprint typed by the user', () => {
   assert.equal(normalizeFingerprint(`SHA256: ${hex}`), hex);
   assert.equal(normalizeFingerprint('abcd'), null);
 
+  assert.equal(
+    normalizeConfig({ url: '192.0.2.10', fingerprint: hex }).url,
+    'https://192.0.2.10:51515',
+  );
+  assert.equal(
+    normalizeConfig({ url: 'http://192.0.2.10:51515', fingerprint: hex }).url,
+    'https://192.0.2.10:51515',
+  );
   const config = normalizeConfig({ url: '192.0.2.10', password: ' p ', username: '  ' });
   assert.equal(config.username, 'kopia');
   assert.equal(config.password, ' p ');
