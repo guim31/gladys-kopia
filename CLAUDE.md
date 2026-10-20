@@ -31,16 +31,21 @@ pushing.
 ## Architecture
 
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
+index.js                          SDK wiring only (src/app.js), shutdown
+src/app.js                        every SDK handler registered on the hub (the tests use it too)
+src/hub.js                        reading timer, source views, states, scene events, transports, status
+src/kopia/client.js               Kopia server API: session + CSRF, repo status, sources, tasks, snapshots, upload; TLS pinning
+src/devices.js                    device blueprints, feature names (4 languages), states, overdue rule
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
+src/widgets.js                    dashboard widget (manifest `widgets`)
+src/texts.js                      every text sent to Gladys outside the widget, 4 languages
+src/store.js                      /data/kopia-state.json: last snapshot seen per source, overdue or not
+src/problems.js                   one log line when a repeated failure starts, one when it ends
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys (mandatory, same sections)
+test/                             node --test, against the SDK's fake Gladys and test/helpers/fakeKopia.js
+test/fixtures/kopia/              real answers of Kopia 0.23.1 (Docker), anonymized
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +75,9 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in English, French, German ("du") and Spanish
+  ("usted"): action messages, manifest texts, widget, feature names, and
+  `docs/{en,fr,de,es}.md`, kept in sync. `test/i18n.test.js` checks it.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -233,3 +239,38 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Kopia (propre à ce dépôt)
+
+Vérifié sur un vrai **Kopia 0.23.1** (image `kopia/kopia`, le 20/10/2026, dépôt sur système de fichiers,
+`kopia server start --server-username/--server-password`, en `--insecure` puis `--tls-generate-cert`) :
+
+- **Garde de l'API** : Basic auth sur chaque requête **et**, pour `/api/v1/*`, le cookie
+  `Kopia-Session-Cookie` plus l'en-tête `X-Kopia-Csrf-Token`, même pour un GET (sinon 401 « Invalid or
+  missing CSRF token. »). Les deux viennent de `GET /` (la page de l'interface, avec Basic) : cookie dans
+  `Set-Cookie`, jeton dans `<meta name="kopia-csrf-token" content="…">`. Un redémarrage de Kopia
+  invalide la session : le client rouvre la page sur un 401 et réessaie une fois. Mauvais identifiants :
+  401 « Access denied. » dès la page. Le cookie `Kopia-Auth` (JWT) envoyé aussi ne sert pas.
+- `GET /repo/status` : `{ connected }`. Déconnecté, `/sources` et `/snapshots` répondent 400
+  `{"code":"NOT_CONNECTED"}` : lu d'abord, erreur `no_repository`, l'appareil serveur publie alors
+  « Dépôt connecté » à 0 (et garde le badge local).
+- `GET /sources` : `{ localUsername, localHost, sources: [{ source: { host, userName, path }, status
+(IDLE, UPLOADING…), schedule (intervalSeconds, timeOfDay, cron, manual), lastSnapshot (manifeste :
+stats.totalSize/fileCount/errorCount/ignoredErrorCount, rootEntry.summ.errors[]), nextSnapshotTime,
+upload (hashedBytes, cachedBytes, estimatedBytes…) }] }`. Une source n'apparaît qu'avec une stratégie
+  ou un instantané. Identifiant Gladys : 16 hex du SHA-256 de `user@host:/path`.
+- **Un fichier illisible n'empêche pas l'instantané** : il est enregistré avec `errorCount` > 0
+  (→ « en échec »). **Un échec complet** (dossier supprimé) n'enregistre rien : seule trace, une tâche
+  `GET /tasks` `kind: Snapshot`, `status: FAILED`, `errorMessage`, `description` « user@host:/path at
+  <date> ». Les tâches vivent en mémoire de Kopia : perdues au redémarrage. D'où la règle des
+  déclencheurs : n'annoncer qu'une exécution **plus récente** (`begin`) que celle gardée dans `/data`,
+  sinon le retour de l'instantané d'avant ferait annoncer une fausse réussite.
+- `GET /snapshots?userName=&host=&path=` : liste (`summary.numFailed`, `incomplete`), `unfilteredCount`
+  = instantanés conservés. Lu quand le dernier instantané d'une source change, et toutes les heures.
+- `POST /sources/upload?userName=&host=&path=` → `{ sources: { "<user@host:path>": { success } } }` ;
+  source inconnue : 404 `NOT_FOUND`.
+- TLS auto-signé (`--tls-generate-cert`) : accepté seulement si le SHA-256 du certificat (DER) égale
+  l'empreinte configurée, vérifiée sur la socket TLS **avant** l'envoi de la requête (`createConnection`
+  d'une socket déjà vérifiée) ; `fetch` de Node ne permet pas cela, d'où `node:http(s)`.
+- « En retard » automatique : `intervalSeconds` (ou 24 h pour `timeOfDay`) + max(1 h, période/4) ; cron
+  ou manuel : jamais en retard sans délai fixe.

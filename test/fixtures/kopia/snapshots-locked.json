@@ -1,0 +1,29 @@
+{
+  "snapshots": [
+    {
+      "id": "bfa47d8192c13ed14d21a2be07a07cf0",
+      "description": "",
+      "startTime": "2026-10-20T06:52:10.674730903Z",
+      "endTime": "2026-10-20T06:52:10.769203534Z",
+      "summary": {
+        "size": 7,
+        "files": 1,
+        "symlinks": 0,
+        "dirs": 1,
+        "maxTime": "2026-10-20T06:51:29.160864623Z",
+        "numFailed": 1,
+        "errors": [
+          {
+            "path": "nope.txt",
+            "error": "unable to open file: unable to open local file: open /tmp/src/locked/nope.txt: permission denied"
+          }
+        ]
+      },
+      "rootID": "k93dcb62d955d656e264187416cdac193",
+      "retention": ["latest-1", "hourly-1", "daily-1", "weekly-1", "monthly-1", "annual-1"],
+      "pins": []
+    }
+  ],
+  "unfilteredCount": 1,
+  "uniqueCount": 1
+}

@@ -1,0 +1,48 @@
+{
+  "localUsername": "nobody",
+  "localHost": "nas",
+  "multiUser": true,
+  "sources": [
+    {
+      "source": {
+        "host": "nas",
+        "userName": "nobody",
+        "path": "/tmp/src/docs"
+      },
+      "status": "IDLE",
+      "schedule": {
+        "intervalSeconds": 86400,
+        "runMissed": true
+      },
+      "nextSnapshotTime": "2026-10-20T06:52:03.290724973Z"
+    },
+    {
+      "source": {
+        "host": "nas",
+        "userName": "nobody",
+        "path": "/tmp/src/locked"
+      },
+      "status": "UPLOADING",
+      "schedule": {
+        "runMissed": true
+      },
+      "upload": {
+        "cachedBytes": 0,
+        "hashedBytes": 7,
+        "uploadedBytes": 0,
+        "estimatedBytes": 14,
+        "cachedFiles": 0,
+        "hashedFiles": 2,
+        "excludedFiles": 0,
+        "excludedDirs": 0,
+        "errors": 1,
+        "ignoredErrors": 0,
+        "estimatedFiles": 2,
+        "directory": ".",
+        "lastErrorPath": "nope.txt",
+        "lastError": "unable to open file: unable to open local file: open /tmp/src/locked/nope.txt: permission denied"
+      },
+      "currentTask": "3"
+    }
+  ]
+}
