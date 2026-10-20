@@ -121,6 +121,9 @@ export async function httpRequest(
   const options = { method, headers, timeout: timeoutMs, agent: false };
   if (secure && fingerprint) {
     const socket = await pinnedSocket(url, fingerprint, timeoutMs);
+    // No agent at all: with one (even `agent: false`), https opens its own
+    // connection and ignores createConnection.
+    delete options.agent;
     options.createConnection = () => socket;
   }
   return new Promise((resolve, reject) => {
@@ -221,8 +224,10 @@ export function normalizeSnapshot(data) {
     begin,
     end,
     durationS: Math.max(0, Math.round((end - begin) / 1000)),
-    sizeBytes: integer(stats.totalSize) ?? integer(summary.size),
-    files: integer(stats.fileCount) ?? integer(summary.files),
+    // The summary of the tree: `stats` only counts the files read again
+    // (fileCount is 0 when nothing changed).
+    sizeBytes: integer(summary.size) ?? integer(stats.totalSize),
+    files: integer(summary.files) ?? integer(stats.fileCount),
     errors,
     incomplete,
     message: firstError(summary.errors) || (incomplete ? clean(String(data.incomplete)) : ''),

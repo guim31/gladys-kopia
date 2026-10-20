@@ -61,6 +61,12 @@ test('the sources of a real Kopia, normalized', async () => {
   assert.match(locked.last.message, /^nope\.txt: unable to open file: .*permission denied$/);
 });
 
+test('a snapshot of unchanged files in a real Kopia: the files of the tree, not the ones read', async () => {
+  const [docs] = normalizeSources(await fixture('sources-unchanged.json'));
+  assert.equal(docs.last.files, 2);
+  assert.equal(docs.last.sizeBytes, 12);
+});
+
 test('a snapshot running in a real Kopia: its progress', async () => {
   const sources = normalizeSources(await fixture('sources-running.json'));
   const running = sources.find((s) => s.running);

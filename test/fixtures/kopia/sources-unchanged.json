@@ -1,0 +1,168 @@
+{
+  "localUsername": "nobody",
+  "localHost": "nas",
+  "multiUser": true,
+  "sources": [
+    {
+      "source": {
+        "host": "nas",
+        "userName": "nobody",
+        "path": "/tmp/src/docs"
+      },
+      "status": "IDLE",
+      "schedule": {
+        "intervalSeconds": 86400,
+        "runMissed": true
+      },
+      "lastSnapshot": {
+        "id": "4f8cd5dffab88bef380f243a812cb73e",
+        "source": {
+          "host": "nas",
+          "userName": "nobody",
+          "path": "/tmp/src/docs"
+        },
+        "description": "",
+        "startTime": "2026-10-20T07:07:39.51483452Z",
+        "endTime": "2026-10-20T07:07:39.51894783Z",
+        "stats": {
+          "totalSize": 12,
+          "excludedTotalSize": 0,
+          "fileCount": 0,
+          "cachedFiles": 2,
+          "nonCachedFiles": 0,
+          "dirCount": 2,
+          "excludedFileCount": 0,
+          "excludedDirCount": 0,
+          "ignoredErrorCount": 0,
+          "errorCount": 0
+        },
+        "rootEntry": {
+          "name": "docs",
+          "type": "d",
+          "mode": "0755",
+          "mtime": "2026-10-20T06:51:29.159864622Z",
+          "uid": 1000,
+          "gid": 1000,
+          "obj": "kb2c8e3be170f135e65e03ab3274e5ed7",
+          "summ": {
+            "size": 12,
+            "files": 2,
+            "symlinks": 0,
+            "dirs": 2,
+            "maxTime": "2026-10-20T06:51:29.160864623Z",
+            "numFailed": 0
+          }
+        }
+      },
+      "nextSnapshotTime": "2026-10-21T00:00:00Z"
+    },
+    {
+      "source": {
+        "host": "nas",
+        "userName": "nobody",
+        "path": "/tmp/src/gone"
+      },
+      "status": "IDLE",
+      "schedule": {
+        "runMissed": true
+      },
+      "lastSnapshot": {
+        "id": "1a574c88e76a85079d91d2b0961b563f",
+        "source": {
+          "host": "nas",
+          "userName": "nobody",
+          "path": "/tmp/src/gone"
+        },
+        "description": "",
+        "startTime": "2026-10-20T06:52:27.107276846Z",
+        "endTime": "2026-10-20T06:52:27.121299118Z",
+        "stats": {
+          "totalSize": 2,
+          "excludedTotalSize": 0,
+          "fileCount": 1,
+          "cachedFiles": 0,
+          "nonCachedFiles": 1,
+          "dirCount": 1,
+          "excludedFileCount": 0,
+          "excludedDirCount": 0,
+          "ignoredErrorCount": 0,
+          "errorCount": 0
+        },
+        "rootEntry": {
+          "name": "gone",
+          "type": "d",
+          "mode": "0755",
+          "mtime": "2026-10-20T06:52:26.765911208Z",
+          "uid": 1000,
+          "gid": 1000,
+          "obj": "ka722a573bea603ed0d3862c2433be5e0",
+          "summ": {
+            "size": 2,
+            "files": 1,
+            "symlinks": 0,
+            "dirs": 1,
+            "maxTime": "2026-10-20T06:52:26.765911208Z",
+            "numFailed": 0
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "host": "nas",
+        "userName": "nobody",
+        "path": "/tmp/src/locked"
+      },
+      "status": "IDLE",
+      "schedule": {
+        "runMissed": true
+      },
+      "lastSnapshot": {
+        "id": "124bf5c1beb50e8ee1d38321f6e272ea",
+        "source": {
+          "host": "nas",
+          "userName": "nobody",
+          "path": "/tmp/src/locked"
+        },
+        "description": "",
+        "startTime": "2026-10-20T07:07:47.52880488Z",
+        "endTime": "2026-10-20T07:07:47.530952046Z",
+        "stats": {
+          "totalSize": 7,
+          "excludedTotalSize": 0,
+          "fileCount": 0,
+          "cachedFiles": 1,
+          "nonCachedFiles": 1,
+          "dirCount": 1,
+          "excludedFileCount": 0,
+          "excludedDirCount": 0,
+          "ignoredErrorCount": 0,
+          "errorCount": 1
+        },
+        "rootEntry": {
+          "name": "locked",
+          "type": "d",
+          "mode": "0755",
+          "mtime": "2026-10-20T06:51:29.160864623Z",
+          "uid": 1000,
+          "gid": 1000,
+          "obj": "k93dcb62d955d656e264187416cdac193",
+          "summ": {
+            "size": 7,
+            "files": 1,
+            "symlinks": 0,
+            "dirs": 1,
+            "maxTime": "2026-10-20T06:51:29.160864623Z",
+            "numFailed": 1,
+            "errors": [
+              {
+                "path": "nope.txt",
+                "error": "unable to open file: unable to open local file: open /tmp/src/locked/nope.txt: permission denied"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -265,12 +265,17 @@ upload (hashedBytes, cachedBytes, estimatedBytes…) }] }`. Une source n'appara�
   <date> ». Les tâches vivent en mémoire de Kopia : perdues au redémarrage. D'où la règle des
   déclencheurs : n'annoncer qu'une exécution **plus récente** (`begin`) que celle gardée dans `/data`,
   sinon le retour de l'instantané d'avant ferait annoncer une fausse réussite.
+- **Taille et fichiers d'un instantané : `rootEntry.summ` (`size`, `files`), pas `stats`** : `stats.fileCount`
+  ne compte que les fichiers relus (0 pour un instantané sans changement, vu sur le vrai Kopia).
 - `GET /snapshots?userName=&host=&path=` : liste (`summary.numFailed`, `incomplete`), `unfilteredCount`
   = instantanés conservés. Lu quand le dernier instantané d'une source change, et toutes les heures.
 - `POST /sources/upload?userName=&host=&path=` → `{ sources: { "<user@host:path>": { success } } }` ;
   source inconnue : 404 `NOT_FOUND`.
 - TLS auto-signé (`--tls-generate-cert`) : accepté seulement si le SHA-256 du certificat (DER) égale
   l'empreinte configurée, vérifiée sur la socket TLS **avant** l'envoi de la requête (`createConnection`
-  d'une socket déjà vérifiée) ; `fetch` de Node ne permet pas cela, d'où `node:http(s)`.
+  d'une socket déjà vérifiée) ; `fetch` de Node ne permet pas cela, d'où `node:http(s)`. **Sans `agent`** dans
+  ce cas : avec `agent: false`, `https.request` ouvre sa propre connexion et ignore `createConnection`
+  (le certificat est alors refusé, même avec la bonne empreinte : vu sur le vrai Kopia, pas par les tests,
+  qui n'ont pas de serveur TLS).
 - « En retard » automatique : `intervalSeconds` (ou 24 h pour `timeOfDay`) + max(1 h, période/4) ; cron
   ou manuel : jamais en retard sans délai fixe.
